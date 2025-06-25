@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Users from "./pages/Users";
 import Attendance from "./pages/Attendance";
 import CalendarPage from "./pages/CalendarPage";
+import MobileHome from "./pages/MobileHome";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,7 +20,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<MobileHome />} />
+          <Route path="/admin" element={<Index />} />
           <Route path="/users" element={<Users />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/calendar" element={<CalendarPage />} />
