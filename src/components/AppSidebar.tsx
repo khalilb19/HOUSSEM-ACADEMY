@@ -59,8 +59,12 @@ export function AppSidebar() {
     <Sidebar className="border-r border-school-yellow/20">
       <SidebarHeader className="bg-school-black text-school-yellow p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-school-yellow rounded-lg flex items-center justify-center">
-            <span className="text-school-black font-bold text-lg">📚</span>
+          <div className="w-12 h-12 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/3e4bbc9d-9aac-4075-9c18-7bd64ab1fdf5.png" 
+              alt="Houssem Academy Logo" 
+              className="w-10 h-10 object-contain"
+            />
           </div>
           <div>
             <h2 className="font-bold text-lg">Houssem Academy</h2>
