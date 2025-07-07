@@ -41,7 +41,7 @@ const MobileHome = () => {
                 <SidebarTrigger className="text-school-black hover:bg-school-yellow/10" />
                 <div>
                   <h1 className="text-xl md:text-2xl font-bold text-school-black">Tableau de Bord</h1>
-                  <p className="text-school-black/60 text-sm">Gestion EduManager</p>
+                  <p className="text-school-black/60 text-sm">Houssem Academy</p>
                 </div>
               </div>
               <Badge className="bg-school-yellow text-school-black">

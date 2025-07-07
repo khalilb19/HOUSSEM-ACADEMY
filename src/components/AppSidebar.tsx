@@ -63,7 +63,7 @@ export function AppSidebar() {
             <span className="text-school-black font-bold text-lg">📚</span>
           </div>
           <div>
-            <h2 className="font-bold text-lg">EduManager</h2>
+            <h2 className="font-bold text-lg">Houssem Academy</h2>
             <p className="text-school-yellow/70 text-sm">Administration</p>
           </div>
         </div>
@@ -98,7 +98,7 @@ export function AppSidebar() {
       
       <SidebarFooter className="p-4 bg-school-gray-light border-t">
         <div className="text-center text-sm text-school-black/60">
-          <p>© 2024 EduManager</p>
+          <p>© 2024 Houssem Academy</p>
           <p>Version 1.0</p>
         </div>
       </SidebarFooter>
