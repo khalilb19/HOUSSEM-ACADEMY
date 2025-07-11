@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
@@ -10,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Bell, Send, AlertTriangle, Info, CheckCircle, Plus } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { useToast } = from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 const AnnouncementsPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
