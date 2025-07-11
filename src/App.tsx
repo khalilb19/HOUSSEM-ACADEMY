@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginForm, UserRole } from "@/components/auth/LoginForm";
 import Index from "./pages/Index";
 import Users from "./pages/Users";
@@ -25,6 +25,7 @@ const App = () => {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
 
   const handleLogin = (userData: any, role: UserRole) => {
+    console.log('Login successful:', { userData, role });
     setUser(userData);
     setUserRole(role);
   };
@@ -53,7 +54,7 @@ const App = () => {
       case 'admin':
         return (
           <Routes>
-            <Route path="/" element={<MobileHome />} />
+            <Route path="/" element={<Navigate to="/admin" replace />} />
             <Route path="/admin" element={<Index />} />
             <Route path="/users" element={<Users />} />
             <Route path="/attendance" element={<Attendance />} />
@@ -70,7 +71,7 @@ const App = () => {
       case 'teacher':
         return (
           <Routes>
-            <Route path="/" element={<TeacherDashboard />} />
+            <Route path="/" element={<Navigate to="/teacher" replace />} />
             <Route path="/teacher" element={<TeacherDashboard />} />
             <Route path="/teacher/messages" element={<MessagingPage />} />
             <Route path="/teacher/students" element={<div className="p-6 text-center">Mes Élèves - À implémenter</div>} />
@@ -84,7 +85,7 @@ const App = () => {
       case 'student':
         return (
           <Routes>
-            <Route path="/" element={<StudentDashboard />} />
+            <Route path="/" element={<Navigate to="/student" replace />} />
             <Route path="/student" element={<StudentDashboard />} />
             <Route path="/student/messages" element={<MessagingPage />} />
             <Route path="/student/schedule" element={<div className="p-6 text-center">Emploi du temps - À implémenter</div>} />
@@ -98,7 +99,8 @@ const App = () => {
       case 'parent':
         return (
           <Routes>
-            <Route path="/" element={<div className="p-6 text-center">Espace Parent - À implémenter</div>} />
+            <Route path="/" element={<Navigate to="/parent" replace />} />
+            <Route path="/parent" element={<div className="p-6 text-center">Espace Parent - À implémenter</div>} />
             <Route path="/parent/children" element={<div className="p-6 text-center">Mes Enfants - À implémenter</div>} />
             <Route path="/parent/grades" element={<div className="p-6 text-center">Notes des Enfants - À implémenter</div>} />
             <Route path="/parent/messages" element={<MessagingPage />} />
