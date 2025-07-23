@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Search, Filter, MoreHorizontal, Check, X } from "lucide-react"
+import { Plus, Search, Filter, MoreHorizontal } from "lucide-react"
+import { UserApproval } from "@/components/admin/UserApproval"
 
 const Users = () => {
   const students = [
@@ -70,56 +71,8 @@ const Users = () => {
           </header>
 
           <div className="p-6 space-y-6 animate-fade-in">
-            {/* Demandes en attente */}
-            <Card className="border-school-yellow/20">
-              <CardHeader>
-                <CardTitle className="text-school-black flex items-center gap-2">
-                  Demandes en Attente 
-                  <Badge className="bg-red-100 text-red-800">{pendingRequests.length}</Badge>
-                </CardTitle>
-                <CardDescription>Comptes à valider</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {pendingRequests.map((request) => (
-                    <div key={request.id} className="flex items-center justify-between p-4 bg-school-yellow/10 rounded-lg border border-school-yellow/20">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <p className="font-medium text-school-black">{request.name}</p>
-                            <p className="text-sm text-school-black/60">{request.email}</p>
-                          </div>
-                          <Badge variant="outline" className="border-school-yellow/50 text-school-black">
-                            {request.type}
-                          </Badge>
-                          {request.class && (
-                            <Badge variant="outline" className="border-blue-300 text-blue-700">
-                              {request.class}
-                            </Badge>
-                          )}
-                          {request.subject && (
-                            <Badge variant="outline" className="border-purple-300 text-purple-700">
-                              {request.subject}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-school-black/50 mt-1">{request.date}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                          <Check className="w-4 h-4 mr-1" />
-                          Accepter
-                        </Button>
-                        <Button size="sm" variant="outline" className="border-red-300 text-red-600 hover:bg-red-50">
-                          <X className="w-4 h-4 mr-1" />
-                          Refuser
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Validation des comptes en attente */}
+            <UserApproval />
 
             {/* Onglets pour les différents types d'utilisateurs */}
             <Tabs defaultValue="students" className="space-y-4">

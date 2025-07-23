@@ -1,5 +1,5 @@
 
-import { Calendar, Users, UserCheck, BarChart3, Settings, FileText, Home } from "lucide-react"
+import { Calendar, Users, UserCheck, BarChart3, Settings, FileText, Home, LogOut } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +12,9 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
+import { useAuth } from "@/components/auth/AuthProvider"
 
 const menuItems = [
   {
@@ -54,6 +56,7 @@ const menuItems = [
 
 export function AppSidebar() {
   const location = useLocation()
+  const { signOut, userProfile } = useAuth()
 
   return (
     <Sidebar className="border-r border-school-yellow/20">
@@ -100,10 +103,24 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       
-      <SidebarFooter className="p-4 bg-school-gray-light border-t">
-        <div className="text-center text-sm text-school-black/60">
-          <p>© 2024 Houssem Academy</p>
-          <p>Version 1.0</p>
+      <SidebarFooter className="p-4 bg-school-gray-light border-t space-y-3">
+        <div className="space-y-2">
+          <div className="text-sm text-school-black/70">
+            <p className="font-medium">{userProfile?.first_name} {userProfile?.last_name}</p>
+            <p className="text-xs text-school-black/50">{userProfile?.email}</p>
+          </div>
+          <Button 
+            onClick={signOut}
+            variant="outline" 
+            size="sm" 
+            className="w-full border-red-300 text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Se déconnecter
+          </Button>
+        </div>
+        <div className="text-center text-xs text-school-black/40">
+          <p>© 2024 Houssem Academy v1.0</p>
         </div>
       </SidebarFooter>
     </Sidebar>

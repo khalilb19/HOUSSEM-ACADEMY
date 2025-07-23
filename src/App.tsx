@@ -1,16 +1,16 @@
 
-import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { LoginForm, UserRole } from "@/components/auth/LoginForm";
+import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
+import { AuthPage } from "@/components/auth/AuthPage";
+import { PendingApproval } from "@/components/auth/PendingApproval";
 import Index from "./pages/Index";
 import Users from "./pages/Users";
 import Attendance from "./pages/Attendance";
 import CalendarPage from "./pages/CalendarPage";
-import MobileHome from "./pages/MobileHome";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import TeacherDashboard from "./pages/TeacherDashboard";
@@ -20,37 +20,34 @@ import AnnouncementsPage from "./pages/AnnouncementsPage";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  const [user, setUser] = useState<any>(null);
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
+const AppContent = () => {
+  const { user, userProfile, loading } = useAuth();
 
-  const handleLogin = (userData: any, role: UserRole) => {
-    console.log('Login successful:', { userData, role });
-    setUser(userData);
-    setUserRole(role);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setUserRole(null);
-  };
-
-  // Si l'utilisateur n'est pas connecté, afficher le formulaire de connexion
-  if (!user || !userRole) {
+  // Show loading state
+  if (loading) {
     return (
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <LoginForm onLogin={handleLogin} />
-        </TooltipProvider>
-      </QueryClientProvider>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Chargement...</p>
+        </div>
+      </div>
     );
   }
 
-  // Routes selon le rôle de l'utilisateur
+  // Show auth page if not logged in
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  // Show pending approval page if user is not approved
+  if (userProfile?.status !== 'approved') {
+    return <PendingApproval />;
+  }
+
+  // Routes selon le rôle de l'utilisateur approuvé
   const renderRoutesByRole = () => {
-    switch (userRole) {
+    switch (userProfile?.role) {
       case 'admin':
         return (
           <Routes>
@@ -110,18 +107,30 @@ const App = () => {
         );
       
       default:
-        return <Route path="*" element={<NotFound />} />;
+        return (
+          <Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        );
     }
   };
 
+  return (
+    <BrowserRouter>
+      {renderRoutesByRole()}
+    </BrowserRouter>
+  );
+};
+
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          {renderRoutesByRole()}
-        </BrowserRouter>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
