@@ -126,8 +126,35 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
             </Button>
           </form>
 
-          <div className="space-y-2">
-            <p className="text-sm text-gray-600 text-center">Ou essayez une connexion démo :</p>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600 text-center">Comptes de test disponibles :</p>
+            
+            <div className="space-y-3 text-sm">
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <p className="font-semibold text-blue-800">👑 Admin</p>
+                <p className="text-blue-700">Email: admin@houssemacademy.com</p>
+                <p className="text-blue-700">Mot de passe: admin123</p>
+              </div>
+              
+              <div className="p-3 bg-green-50 rounded-lg">
+                <p className="font-semibold text-green-800">👨‍🏫 Professeur</p>
+                <p className="text-green-700">Email: prof@houssemacademy.com</p>
+                <p className="text-green-700">Mot de passe: prof123</p>
+              </div>
+              
+              <div className="p-3 bg-purple-50 rounded-lg">
+                <p className="font-semibold text-purple-800">🎓 Élève</p>
+                <p className="text-purple-700">Email: eleve@houssemacademy.com</p>
+                <p className="text-purple-700">Mot de passe: eleve123</p>
+              </div>
+              
+              <div className="p-3 bg-orange-50 rounded-lg">
+                <p className="font-semibold text-orange-800">👨‍👩‍👧‍👦 Parent</p>
+                <p className="text-orange-700">Email: parent@houssemacademy.com</p>
+                <p className="text-orange-700">Mot de passe: parent123</p>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
