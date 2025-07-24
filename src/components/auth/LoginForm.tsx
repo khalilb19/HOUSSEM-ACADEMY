@@ -52,14 +52,13 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
   }
 
   const handleDemoLogin = (demoRole: UserRole) => {
-    const demoUser = {
-      id: '1',
-      email: 'demo@houssemacademy.com',
-      name: demoRole === 'admin' ? 'Administrateur' : 
-            demoRole === 'teacher' ? 'Professeur Demo' : 
-            demoRole === 'student' ? 'Élève Demo' : 'Parent Demo'
+    const demoUsers = {
+      admin: { id: 'admin-demo', email: 'admin@houssemacademy.com', name: 'Admin Demo' },
+      teacher: { id: 'teacher-demo', email: 'prof@houssemacademy.com', name: 'Professeur Demo' },
+      student: { id: 'student-demo', email: 'eleve@houssemacademy.com', name: 'Élève Demo' },
+      parent: { id: 'parent-demo', email: 'parent@houssemacademy.com', name: 'Parent Demo' }
     }
-    onLogin(demoUser, demoRole)
+    onLogin(demoUsers[demoRole], demoRole)
   }
 
   return (
