@@ -14,60 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_levels: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academic_levels_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "academic_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          academic_level_id: number
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          academic_level_id: number
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          academic_level_id?: number
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_academic_level"
+            columns: ["academic_level_id"]
+            isOneToOne: false
+            referencedRelation: "academic_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          class_id: number
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          class_id: number
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          class_id?: number
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_class"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
-          email: string
           first_name: string | null
           id: string
           last_name: string | null
-          updated_at: string
+          role_id: number
+          user_id: string
         }
         Insert: {
           created_at?: string
-          email: string
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
-          updated_at?: string
+          role_id: number
+          user_id: string
         }
-        Relationships: []
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          role_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_role"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
-          approved_at: string | null
-          approved_by: string | null
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          status: Database["public"]["Enums"]["user_status"]
-          user_id: string
+          id: number
+          role_name: string
         }
         Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          status?: Database["public"]["Enums"]["user_status"]
-          user_id: string
+          id: number
+          role_name: string
         }
         Update: {
-          approved_at?: string | null
-          approved_by?: string | null
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          status?: Database["public"]["Enums"]["user_status"]
-          user_id?: string
+          id?: number
+          role_name?: string
         }
         Relationships: []
       }
@@ -80,8 +157,24 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_user_role_id: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       is_admin: {
-        Args: { user_uuid: string }
+        Args: Record<PropertyKey, never> | { user_uuid: string }
+        Returns: boolean
+      }
+      is_parent: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_prof: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_student: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       is_user_approved: {
