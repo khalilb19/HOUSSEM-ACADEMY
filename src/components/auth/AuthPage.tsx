@@ -8,8 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from './AuthProvider'
 
 export const AuthPage = () => {
-  const { signIn, signUp } = useAuth()
-  
   // Login form state
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
@@ -20,13 +18,15 @@ export const AuthPage = () => {
   const [signupPassword, setSignupPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [role, setRole] = useState<string>('student')
+  const [role, setRole] = useState('student')
   const [signupLoading, setSignupLoading] = useState(false)
+
+  const { signIn, signUp } = useAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoginLoading(true)
-
+    
     try {
       await signIn(loginEmail, loginPassword)
     } finally {
@@ -37,27 +37,20 @@ export const AuthPage = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setSignupLoading(true)
-
+    
     try {
       await signUp(signupEmail, signupPassword, {
         first_name: firstName,
         last_name: lastName,
         role
       })
-      
-      // Reset form on success
-      setSignupEmail('')
-      setSignupPassword('')
-      setFirstName('')
-      setLastName('')
-      setRole('student')
     } finally {
       setSignupLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
@@ -67,50 +60,47 @@ export const AuthPage = () => {
               className="w-16 h-16 object-contain"
             />
           </div>
-          <CardTitle className="text-2xl text-gray-900">Houssem Academy</CardTitle>
-          <CardDescription className="text-gray-600">
-            Connectez-vous ou créez votre compte
-          </CardDescription>
+          <CardTitle className="text-2xl">Houssem Academy</CardTitle>
+          <CardDescription>Connectez-vous ou créez un compte</CardDescription>
         </CardHeader>
-        
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Se connecter</TabsTrigger>
-              <TabsTrigger value="signup">S'inscrire</TabsTrigger>
+              <TabsTrigger value="login">Connexion</TabsTrigger>
+              <TabsTrigger value="signup">Inscription</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="login" className="space-y-4">
+            <TabsContent value="login" className="space-y-4 mt-4">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <Label htmlFor="login-email" className="text-gray-700">Email</Label>
+                  <Label htmlFor="login-email">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="votre.email@example.com"
-                    className="mt-1"
                     required
+                    className="mt-1"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="login-password" className="text-gray-700">Mot de passe</Label>
+                  <Label htmlFor="login-password">Mot de passe</Label>
                   <Input
                     id="login-password"
                     type="password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="mt-1"
                     required
+                    className="mt-1"
                   />
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+                  className="w-full"
                   disabled={loginLoading}
                 >
                   {loginLoading ? 'Connexion...' : 'Se connecter'}
@@ -118,61 +108,61 @@ export const AuthPage = () => {
               </form>
             </TabsContent>
             
-            <TabsContent value="signup" className="space-y-4">
+            <TabsContent value="signup" className="space-y-4 mt-4">
               <form onSubmit={handleSignup} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <Label htmlFor="first-name" className="text-gray-700">Prénom</Label>
+                    <Label htmlFor="first-name">Prénom</Label>
                     <Input
                       id="first-name"
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Prénom"
+                      placeholder="Votre prénom"
                       className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="last-name" className="text-gray-700">Nom</Label>
+                    <Label htmlFor="last-name">Nom</Label>
                     <Input
                       id="last-name"
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Nom"
+                      placeholder="Votre nom"
                       className="mt-1"
                     />
                   </div>
                 </div>
-
+                
                 <div>
-                  <Label htmlFor="signup-email" className="text-gray-700">Email</Label>
+                  <Label htmlFor="signup-email">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
                     placeholder="votre.email@example.com"
-                    className="mt-1"
                     required
+                    className="mt-1"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="signup-password" className="text-gray-700">Mot de passe</Label>
+                  <Label htmlFor="signup-password">Mot de passe</Label>
                   <Input
                     id="signup-password"
                     type="password"
                     value={signupPassword}
                     onChange={(e) => setSignupPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="mt-1"
                     required
+                    className="mt-1"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="role" className="text-gray-700">Je suis un(e)</Label>
+                  <Label htmlFor="role">Rôle</Label>
                   <Select value={role} onValueChange={setRole}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Sélectionnez votre rôle" />
@@ -187,16 +177,16 @@ export const AuthPage = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                  className="w-full"
                   disabled={signupLoading}
                 >
                   {signupLoading ? 'Inscription...' : "S'inscrire"}
                 </Button>
+                
+                <p className="text-xs text-muted-foreground text-center">
+                  Votre compte sera créé et en attente de validation par un administrateur.
+                </p>
               </form>
-              
-              <div className="text-sm text-gray-600 text-center mt-4">
-                <p>Après inscription, votre compte sera en attente de validation par un administrateur.</p>
-              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
