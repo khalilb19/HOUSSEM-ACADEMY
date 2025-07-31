@@ -34,10 +34,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      // Fetch profile data
+      // Fetch profile data with role information
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select(`
+          *,
+          user_roles!inner(role_name)
+        `)
         .eq('user_id', userId)
         .maybeSingle()
 
@@ -47,15 +50,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (profile) {
-        // Pour le moment, nous utilisons les données directement du profil
-        // En attendant que la migration soit complètement appliquée
         setUserProfile({
           id: profile.id,
-          email: user?.email || profile.first_name + '@demo.com',
+          email: user?.email || '',
           first_name: profile.first_name,
           last_name: profile.last_name,
-          role: 'admin', // Temporaire - sera corrigé quand la base est prête
-          status: 'approved' // Temporaire - sera corrigé quand la base est prête
+          role: profile.user_roles?.role_name as 'admin' | 'teacher' | 'parent' | 'student',
+          status: 'approved' // Pour l'instant, tous les profils sont approuvés
         })
       }
     } catch (error) {
