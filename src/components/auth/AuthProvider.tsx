@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .from('profiles')
         .select(`
           *,
-          user_roles!inner(role_name)
+          user_roles!role_id(role_name)
         `)
         .eq('user_id', userId)
         .maybeSingle()
@@ -50,13 +50,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (profile) {
+        // Check actual approval status from database
+        const { data: approvalStatus } = await supabase.rpc('get_user_approval_status', { 
+          user_uuid: userId 
+        })
+
         setUserProfile({
           id: profile.id,
           email: user?.email || '',
           first_name: profile.first_name,
           last_name: profile.last_name,
           role: profile.user_roles?.role_name as 'admin' | 'teacher' | 'parent' | 'student',
-          status: 'approved' // Pour l'instant, tous les profils sont approuvés
+          status: (approvalStatus || 'pending') as 'pending' | 'approved' | 'rejected'
         })
       }
     } catch (error) {
@@ -106,6 +111,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, userData: { first_name?: string; last_name?: string; role: string }) => {
     try {
+      // Security: Restrict signup to student/parent roles only
+      if (!['student', 'parent'].includes(userData.role)) {
+        toast({
+          variant: "destructive",
+          title: "Erreur d'inscription",
+          description: "L'inscription est limitée aux étudiants et parents uniquement.",
+        })
+        return { error: new Error('Invalid role for signup') }
+      }
+
       const redirectUrl = `${window.location.origin}/`
       
       const { error } = await supabase.auth.signUp({

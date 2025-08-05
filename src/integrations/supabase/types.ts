@@ -245,6 +245,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_approval_status: {
+        Args: { user_uuid: string }
+        Returns: string
+      }
       get_user_role: {
         Args: { user_uuid: string }
         Returns: Database["public"]["Enums"]["app_role"]
