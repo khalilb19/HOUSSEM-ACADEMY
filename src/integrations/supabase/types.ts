@@ -104,24 +104,30 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          parent_id: string | null
           role_id: number
           user_id: string
+          user_role_id: number | null
         }
         Insert: {
           created_at?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
+          parent_id?: string | null
           role_id: number
           user_id: string
+          user_role_id?: number | null
         }
         Update: {
           created_at?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
+          parent_id?: string | null
           role_id?: number
           user_id?: string
+          user_role_id?: number | null
         }
         Relationships: [
           {
@@ -131,6 +137,92 @@ export type Database = {
             referencedRelation: "user_roles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_user_role"
+            columns: ["user_role_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      student_enrollments: {
+        Row: {
+          class_id: number
+          enrolled_at: string | null
+          id: string
+          student_id: string
+        }
+        Insert: {
+          class_id: number
+          enrolled_at?: string | null
+          id?: string
+          student_id: string
+        }
+        Update: {
+          class_id?: number
+          enrolled_at?: string | null
+          id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_enrollments_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_enrollments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      teacher_classes: {
+        Row: {
+          class_id: number
+          created_at: string | null
+          id: string
+          teacher_id: string
+        }
+        Insert: {
+          class_id: number
+          created_at?: string | null
+          id?: string
+          teacher_id: string
+        }
+        Update: {
+          class_id?: number
+          created_at?: string | null
+          id?: string
+          teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_classes_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teacher_classes_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       user_roles: {
@@ -139,7 +231,7 @@ export type Database = {
           role_name: string
         }
         Insert: {
-          id: number
+          id?: number
           role_name: string
         }
         Update: {
