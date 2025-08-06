@@ -129,29 +129,40 @@ export type Database = {
           user_id?: string
           user_role_id?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "fk_role"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "user_roles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_user_role"
-            columns: ["user_role_id"]
-            isOneToOne: false
-            referencedRelation: "user_roles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profiles_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
+      }
+      profiles_backup_pre_reconstruct: {
+        Row: {
+          created_at: string | null
+          first_name: string | null
+          id: string | null
+          last_name: string | null
+          parent_id: string | null
+          role_id: number | null
+          user_id: string | null
+          user_role_id: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          parent_id?: string | null
+          role_id?: number | null
+          user_id?: string | null
+          user_role_id?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          first_name?: string | null
+          id?: string | null
+          last_name?: string | null
+          parent_id?: string | null
+          role_id?: number | null
+          user_id?: string | null
+          user_role_id?: number | null
+        }
+        Relationships: []
       }
       student_enrollments: {
         Row: {
@@ -179,13 +190,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "student_enrollments_student_id_fkey"
-            columns: ["student_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -215,13 +219,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "classes"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "teacher_classes_teacher_id_fkey"
-            columns: ["teacher_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
           },
         ]
       }
