@@ -129,7 +129,15 @@ export type Database = {
           user_id?: string
           user_role_id?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_role"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles_backup_pre_reconstruct: {
         Row: {
@@ -242,6 +250,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_admin_role_for_specific_user: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_user_approval_status: {
         Args: { user_uuid: string }
         Returns: string
