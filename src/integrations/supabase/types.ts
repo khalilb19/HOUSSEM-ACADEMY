@@ -395,7 +395,7 @@ export type Database = {
       }
       get_user_role: {
         Args: { user_uuid: string }
-        Returns: Database["public"]["Enums"]["app_role"]
+        Returns: string
       }
       get_user_role_id: {
         Args: Record<PropertyKey, never>
