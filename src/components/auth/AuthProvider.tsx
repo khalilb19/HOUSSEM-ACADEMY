@@ -51,9 +51,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (profile) {
         // Check actual approval status from database
-        const { data: approvalStatus } = await supabase.rpc('get_user_approval_status', { 
+        const { data: approvalStatus, error: approvalError } = await supabase.rpc('get_user_approval_status', { 
           user_uuid: userId 
         })
+
+        if (approvalError) {
+          console.error('Error fetching approval status:', approvalError)
+        }
 
         setUserProfile({
           id: profile.id,
