@@ -40,6 +40,100 @@ export type Database = {
           },
         ]
       }
+      attendance_records: {
+        Row: {
+          arrival_time: string | null
+          created_at: string | null
+          id: string
+          marked_at: string | null
+          marked_by: string | null
+          notes: string | null
+          session_id: string
+          status: string
+          student_id: string
+        }
+        Insert: {
+          arrival_time?: string | null
+          created_at?: string | null
+          id?: string
+          marked_at?: string | null
+          marked_by?: string | null
+          notes?: string | null
+          session_id: string
+          status?: string
+          student_id: string
+        }
+        Update: {
+          arrival_time?: string | null
+          created_at?: string | null
+          id?: string
+          marked_at?: string | null
+          marked_by?: string | null
+          notes?: string | null
+          session_id?: string
+          status?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_records_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "attendance_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance_sessions: {
+        Row: {
+          class_id: number
+          created_at: string | null
+          end_time: string
+          id: string
+          notes: string | null
+          session_date: string
+          start_time: string
+          status: string
+          subject: string
+          teacher_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          class_id: number
+          created_at?: string | null
+          end_time: string
+          id?: string
+          notes?: string | null
+          session_date: string
+          start_time: string
+          status?: string
+          subject: string
+          teacher_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          class_id?: number
+          created_at?: string | null
+          end_time?: string
+          id?: string
+          notes?: string | null
+          session_date?: string
+          start_time?: string
+          status?: string
+          subject?: string
+          teacher_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_sessions_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       classes: {
         Row: {
           academic_level_id: number
@@ -125,6 +219,220 @@ export type Database = {
           is_group?: boolean
           title?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      course_schedules: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          day_of_week: number
+          effective_from: string
+          effective_until: string | null
+          end_time: string
+          id: string
+          is_active: boolean | null
+          room: string | null
+          start_time: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          day_of_week: number
+          effective_from: string
+          effective_until?: string | null
+          end_time: string
+          id?: string
+          is_active?: boolean | null
+          room?: string | null
+          start_time: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          day_of_week?: number
+          effective_from?: string
+          effective_until?: string | null
+          end_time?: string
+          id?: string
+          is_active?: boolean | null
+          room?: string | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_schedules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_sessions: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          end_time: string
+          id: string
+          is_exam: boolean | null
+          is_makeup: boolean | null
+          notes: string | null
+          room: string | null
+          schedule_id: string | null
+          session_date: string
+          start_time: string
+          status: string
+          topic: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          end_time: string
+          id?: string
+          is_exam?: boolean | null
+          is_makeup?: boolean | null
+          notes?: string | null
+          room?: string | null
+          schedule_id?: string | null
+          session_date: string
+          start_time: string
+          status?: string
+          topic?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          end_time?: string
+          id?: string
+          is_exam?: boolean | null
+          is_makeup?: boolean | null
+          notes?: string | null
+          room?: string | null
+          schedule_id?: string | null
+          session_date?: string
+          start_time?: string
+          status?: string
+          topic?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_sessions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_sessions_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "course_schedules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          academic_year: string
+          class_id: number
+          code: string
+          color: string | null
+          created_at: string | null
+          credits: number | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          semester: string | null
+          teacher_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          academic_year: string
+          class_id: number
+          code: string
+          color?: string | null
+          created_at?: string | null
+          credits?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          semester?: string | null
+          teacher_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          academic_year?: string
+          class_id?: number
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          credits?: number | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          semester?: string | null
+          teacher_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_exports: {
+        Row: {
+          created_at: string | null
+          download_count: number | null
+          error_message: string | null
+          expires_at: string | null
+          export_type: string
+          file_name: string
+          file_path: string | null
+          file_size: number | null
+          filters: Json | null
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          download_count?: number | null
+          error_message?: string | null
+          expires_at?: string | null
+          export_type: string
+          file_name: string
+          file_path?: string | null
+          file_size?: number | null
+          filters?: Json | null
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          download_count?: number | null
+          error_message?: string | null
+          expires_at?: string | null
+          export_type?: string
+          file_name?: string
+          file_path?: string | null
+          file_size?: number | null
+          filters?: Json | null
+          id?: string
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -232,6 +540,123 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_settings: {
+        Row: {
+          announcement_notifications: boolean | null
+          attendance_notifications: boolean | null
+          created_at: string | null
+          email_enabled: boolean | null
+          grade_notifications: boolean | null
+          id: string
+          push_enabled: boolean | null
+          reminder_notifications: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          announcement_notifications?: boolean | null
+          attendance_notifications?: boolean | null
+          created_at?: string | null
+          email_enabled?: boolean | null
+          grade_notifications?: boolean | null
+          id?: string
+          push_enabled?: boolean | null
+          reminder_notifications?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          announcement_notifications?: boolean | null
+          attendance_notifications?: boolean | null
+          created_at?: string | null
+          email_enabled?: boolean | null
+          grade_notifications?: boolean | null
+          id?: string
+          push_enabled?: boolean | null
+          reminder_notifications?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_templates: {
+        Row: {
+          content_template: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          title_template: string
+          type: string
+        }
+        Insert: {
+          content_template: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          title_template: string
+          type: string
+        }
+        Update: {
+          content_template?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          title_template?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          priority: string | null
+          read_at: string | null
+          related_id: string | null
+          related_table: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          priority?: string | null
+          read_at?: string | null
+          related_id?: string | null
+          related_table?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          priority?: string | null
+          read_at?: string | null
+          related_id?: string | null
+          related_table?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -385,9 +810,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_attendance_session: {
+        Args: {
+          p_class_id: number
+          p_subject: string
+          p_session_date: string
+          p_start_time: string
+          p_end_time: string
+          p_notes?: string
+        }
+        Returns: string
+      }
+      create_notification: {
+        Args: {
+          p_user_id: string
+          p_title: string
+          p_content: string
+          p_type: string
+          p_priority?: string
+          p_related_id?: string
+          p_related_table?: string
+          p_scheduled_for?: string
+        }
+        Returns: string
+      }
       ensure_admin_role_for_specific_user: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      generate_course_sessions: {
+        Args: { p_course_id: string; p_start_date: string; p_end_date: string }
+        Returns: number
       }
       get_user_approval_status: {
         Args: { user_uuid: string }
@@ -420,6 +873,24 @@ export type Database = {
       is_user_approved: {
         Args: { user_uuid: string }
         Returns: boolean
+      }
+      mark_attendance: {
+        Args: {
+          p_session_id: string
+          p_student_id: string
+          p_status: string
+          p_arrival_time?: string
+          p_notes?: string
+        }
+        Returns: boolean
+      }
+      mark_notification_read: {
+        Args: { p_notification_id: string }
+        Returns: boolean
+      }
+      request_data_export: {
+        Args: { p_export_type: string; p_filters?: Json }
+        Returns: string
       }
       send_message_to_role: {
         Args: { p_title: string; p_content: string; p_target_role: string }
