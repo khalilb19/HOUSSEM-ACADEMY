@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .from('profiles')
         .select(`
           *,
-          user_roles!role_id(role_name)
+          user_roles!inner(role_name)
         `)
         .eq('user_id', userId)
         .maybeSingle()
