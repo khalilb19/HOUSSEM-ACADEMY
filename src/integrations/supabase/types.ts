@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -813,24 +813,24 @@ export type Database = {
       create_attendance_session: {
         Args: {
           p_class_id: number
-          p_subject: string
-          p_session_date: string
-          p_start_time: string
           p_end_time: string
           p_notes?: string
+          p_session_date: string
+          p_start_time: string
+          p_subject: string
         }
         Returns: string
       }
       create_notification: {
         Args: {
-          p_user_id: string
-          p_title: string
           p_content: string
-          p_type: string
           p_priority?: string
           p_related_id?: string
           p_related_table?: string
           p_scheduled_for?: string
+          p_title: string
+          p_type: string
+          p_user_id: string
         }
         Returns: string
       }
@@ -839,7 +839,7 @@ export type Database = {
         Returns: undefined
       }
       generate_course_sessions: {
-        Args: { p_course_id: string; p_start_date: string; p_end_date: string }
+        Args: { p_course_id: string; p_end_date: string; p_start_date: string }
         Returns: number
       }
       get_user_approval_status: {
@@ -876,11 +876,11 @@ export type Database = {
       }
       mark_attendance: {
         Args: {
-          p_session_id: string
-          p_student_id: string
-          p_status: string
           p_arrival_time?: string
           p_notes?: string
+          p_session_id: string
+          p_status: string
+          p_student_id: string
         }
         Returns: boolean
       }
@@ -893,11 +893,11 @@ export type Database = {
         Returns: string
       }
       send_message_to_role: {
-        Args: { p_title: string; p_content: string; p_target_role: string }
+        Args: { p_content: string; p_target_role: string; p_title: string }
         Returns: string
       }
       start_individual_conversation: {
-        Args: { p_recipient_id: string; p_content: string }
+        Args: { p_content: string; p_recipient_id: string }
         Returns: string
       }
     }
