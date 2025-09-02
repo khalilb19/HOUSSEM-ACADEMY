@@ -834,6 +834,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_test_attendance_session: {
+        Args: { p_class_id: number; p_subject?: string; p_teacher_id: string }
+        Returns: string
+      }
       ensure_admin_role_for_specific_user: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -841,6 +845,21 @@ export type Database = {
       generate_course_sessions: {
         Args: { p_course_id: string; p_end_date: string; p_start_date: string }
         Returns: number
+      }
+      get_attendance_with_names: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          arrival_time: string
+          created_at: string
+          full_name: string
+          id: string
+          marked_at: string
+          marked_by: string
+          notes: string
+          session_id: string
+          status: string
+          student_id: string
+        }[]
       }
       get_user_approval_status: {
         Args: { user_uuid: string }
