@@ -847,7 +847,7 @@ export type Database = {
         Returns: number
       }
       get_attendance_with_names: {
-        Args: Record<PropertyKey, never>
+        Args: Record<PropertyKey, never> | { p_session_id: string }
         Returns: {
           arrival_time: string
           created_at: string
