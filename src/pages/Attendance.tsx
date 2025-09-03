@@ -1,63 +1,83 @@
-
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarDays, Download, Filter, Check, X, Clock } from "lucide-react"
+import { CalendarDays, Download, Check, X, Clock, Loader2 } from "lucide-react"
 import { useState } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useQuery } from "@tanstack/react-query"
 
 const Attendance = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  const [selectedClass, setSelectedClass] = useState("all")
-  const [selectedCourse, setSelectedCourse] = useState("all")
+  const [selectedSession, setSelectedSession] = useState<string>("all")
 
-  const attendanceData = [
-    { 
-      id: 1, 
-      student: "Ahmed Ben Ali", 
-      class: "7ème A", 
-      course: "Mathématiques", 
-      time: "08:00", 
-      status: "present",
-      teacher: "Prof. Hassan Amri"
+  // Récupérer les sessions d'assiduité pour la date sélectionnée
+  const { data: sessions, isLoading: sessionsLoading } = useQuery({
+    queryKey: ['attendance-sessions', selectedDate],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('attendance_sessions')
+        .select(`
+          id,
+          subject,
+          session_date,
+          start_time,
+          end_time,
+          class_id,
+          teacher_id,
+          classes (
+            id,
+            name
+          )
+        `)
+        .eq('session_date', selectedDate?.toISOString().split('T')[0])
+        .order('start_time');
+      
+      if (error) throw error;
+      
+      // Récupérer les informations des professeurs séparément
+      const sessionsWithTeachers = await Promise.all(
+        (data || []).map(async (session) => {
+          const { data: teacherData } = await supabase
+            .from('profiles')
+            .select('first_name, last_name')
+            .eq('user_id', session.teacher_id)
+            .single();
+          
+          return {
+            ...session,
+            teacher: teacherData
+          };
+        })
+      );
+      
+      return sessionsWithTeachers;
     },
-    { 
-      id: 2, 
-      student: "Fatima Zohra", 
-      class: "7ème B", 
-      course: "Français", 
-      time: "09:00", 
-      status: "absent",
-      teacher: "Prof. Nadia Slim"
-    },
-    { 
-      id: 3, 
-      student: "Youssef Gharbi", 
-      class: "8ème A", 
-      course: "Sciences", 
-      time: "10:00", 
-      status: "late",
-      teacher: "Prof. Karim Jeddi"
-    },
-    { 
-      id: 4, 
-      student: "Salma Triki", 
-      class: "7ème A", 
-      course: "Mathématiques", 
-      time: "08:00", 
-      status: "present",
-      teacher: "Prof. Hassan Amri"
-    },
-  ]
+    enabled: !!selectedDate
+  });
 
-  const classes = ["7ème A", "7ème B", "8ème A", "8ème B"]
-  const courses = ["Mathématiques", "Français", "Sciences", "Histoire", "Arabe"]
+  // Récupérer les données d'assiduité pour la session sélectionnée
+  const { data: attendanceData, isLoading: attendanceLoading } = useQuery({
+    queryKey: ['attendance-records', selectedSession],
+    queryFn: async () => {
+      if (selectedSession === "all" || !selectedSession) return [];
+      
+      const { data, error } = await supabase
+        .rpc('get_attendance_with_names', { _session_id: selectedSession });
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: selectedSession !== "all" && !!selectedSession
+  });
+
+  // Données pour les sessions disponibles
+  const sessionOptions = sessions || [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -73,16 +93,22 @@ const Attendance = () => {
   }
 
   const getTodayStats = () => {
+    if (!attendanceData || attendanceData.length === 0) {
+      return { total: 0, present: 0, absent: 0, late: 0, rate: 0 }
+    }
+    
     const total = attendanceData.length
     const present = attendanceData.filter(a => a.status === "present").length
     const absent = attendanceData.filter(a => a.status === "absent").length
     const late = attendanceData.filter(a => a.status === "late").length
-    const rate = Math.round((present / total) * 100)
+    const rate = total > 0 ? Math.round((present / total) * 100) : 0
     
     return { total, present, absent, late, rate }
   }
 
   const stats = getTodayStats()
+  
+  const selectedSessionData = sessionOptions.find(s => s.id === selectedSession)
 
   return (
     <SidebarProvider>
@@ -95,7 +121,7 @@ const Attendance = () => {
                 <SidebarTrigger className="text-school-black hover:bg-school-yellow/10" />
                 <div>
                   <h1 className="text-2xl font-bold text-school-black">Gestion des Présences</h1>
-                  <p className="text-school-black/60">Suivi et marking des présences élèves</p>
+                  <p className="text-school-black/60">Suivi et marquage des présences élèves</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -183,50 +209,51 @@ const Attendance = () => {
               </Card>
             </div>
 
-            {/* Filtres */}
+            {/* Sélection de session */}
             <Card className="border-school-yellow/20">
               <CardHeader>
-                <CardTitle className="text-school-black">Filtres</CardTitle>
+                <CardTitle className="text-school-black">Sélectionner une Session</CardTitle>
+                <CardDescription>
+                  Choisissez une session d'assiduité pour voir les détails
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-end">
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-school-black">Classe</label>
-                    <Select value={selectedClass} onValueChange={setSelectedClass}>
-                      <SelectTrigger className="border-school-yellow/30 focus:border-school-yellow">
-                        <SelectValue placeholder="Sélectionner une classe" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white border-school-yellow/20">
-                        <SelectItem value="all">Toutes les classes</SelectItem>
-                        {classes.map((cls) => (
-                          <SelectItem key={cls} value={cls}>{cls}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-school-black">Cours</label>
-                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                      <SelectTrigger className="border-school-yellow/30 focus:border-school-yellow">
-                        <SelectValue placeholder="Sélectionner un cours" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white border-school-yellow/20">
-                        <SelectItem value="all">Tous les cours</SelectItem>
-                        {courses.map((course) => (
-                          <SelectItem key={course} value={course}>{course}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-end">
-                    <Button variant="outline" className="border-school-yellow text-school-black hover:bg-school-yellow/10">
-                      <Filter className="w-4 h-4 mr-2" />
-                      Appliquer
-                    </Button>
+                    <label className="text-sm font-medium text-school-black">Session</label>
+                    {sessionsLoading ? (
+                      <div className="flex items-center gap-2 mt-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm text-school-black/60">Chargement des sessions...</span>
+                      </div>
+                    ) : (
+                      <Select value={selectedSession} onValueChange={setSelectedSession}>
+                        <SelectTrigger className="border-school-yellow/30 focus:border-school-yellow">
+                          <SelectValue placeholder="Sélectionner une session" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border-school-yellow/20">
+                          <SelectItem value="all">Toutes les sessions</SelectItem>
+                          {sessionOptions.map((session) => (
+                            <SelectItem key={session.id} value={session.id}>
+                              {session.subject} - {session.start_time?.slice(0, 5)} ({session.classes?.name})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 </div>
+                
+                {selectedSessionData && (
+                  <div className="mt-4 p-3 bg-school-yellow/10 rounded-lg">
+                    <p className="font-medium text-school-black">{selectedSessionData.subject}</p>
+                    <p className="text-sm text-school-black/70">
+                      Classe: {selectedSessionData.classes?.name} | 
+                      Horaire: {selectedSessionData.start_time?.slice(0, 5)} - {selectedSessionData.end_time?.slice(0, 5)} | 
+                      Professeur: {selectedSessionData.teacher?.first_name} {selectedSessionData.teacher?.last_name}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -235,7 +262,9 @@ const Attendance = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-school-black">Présences du Jour</CardTitle>
+                    <CardTitle className="text-school-black">
+                      {selectedSessionData ? `Présences - ${selectedSessionData.subject}` : 'Présences du Jour'}
+                    </CardTitle>
                     <CardDescription>
                       {selectedDate?.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                     </CardDescription>
@@ -246,34 +275,51 @@ const Attendance = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-school-black">Élève</TableHead>
-                      <TableHead className="text-school-black">Classe</TableHead>
-                      <TableHead className="text-school-black">Cours</TableHead>
-                      <TableHead className="text-school-black">Professeur</TableHead>
-                      <TableHead className="text-school-black">Heure</TableHead>
-                      <TableHead className="text-school-black">Statut</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {attendanceData.map((record) => (
-                      <TableRow key={record.id} className="hover:bg-school-yellow/5">
-                        <TableCell className="font-medium text-school-black">{record.student}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="border-blue-300 text-blue-700">
-                            {record.class}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-school-black/70">{record.course}</TableCell>
-                        <TableCell className="text-school-black/70">{record.teacher}</TableCell>
-                        <TableCell className="text-school-black/70">{record.time}</TableCell>
-                        <TableCell>{getStatusBadge(record.status)}</TableCell>
+                {attendanceLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                    <span>Chargement des données d'assiduité...</span>
+                  </div>
+                ) : selectedSession === "all" ? (
+                  <div className="text-center py-8 text-school-black/60">
+                    Veuillez sélectionner une session pour voir les détails d'assiduité
+                  </div>
+                ) : !attendanceData || attendanceData.length === 0 ? (
+                  <div className="text-center py-8 text-school-black/60">
+                    Aucune donnée d'assiduité trouvée pour cette session
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-school-black">Élève</TableHead>
+                        <TableHead className="text-school-black">Statut</TableHead>
+                        <TableHead className="text-school-black">Heure d'arrivée</TableHead>
+                        <TableHead className="text-school-black">Notes</TableHead>
+                        <TableHead className="text-school-black">Marqué le</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {attendanceData.map((record) => (
+                        <TableRow key={record.id} className="hover:bg-school-yellow/5">
+                          <TableCell className="font-medium text-school-black">
+                            {record.full_name}
+                          </TableCell>
+                          <TableCell>{getStatusBadge(record.status)}</TableCell>
+                          <TableCell className="text-school-black/70">
+                            {record.arrival_time || '-'}
+                          </TableCell>
+                          <TableCell className="text-school-black/70">
+                            {record.notes || '-'}
+                          </TableCell>
+                          <TableCell className="text-school-black/70">
+                            {record.marked_at ? new Date(record.marked_at).toLocaleString('fr-FR') : '-'}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </CardContent>
             </Card>
           </div>
